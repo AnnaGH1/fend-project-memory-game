@@ -51,6 +51,10 @@ h1 {
     margin: 0 0 3em;
 }
 
+.deck-inactive {
+  opacity: 0.3;
+}
+
 .deck .card {
     height: 125px;
     width: 125px;
@@ -106,4 +110,8 @@ h1 {
 .score-panel .restart {
     float: right;
     cursor: pointer;
+}
+
+.hidden {
+  opacity: 0;
 }
