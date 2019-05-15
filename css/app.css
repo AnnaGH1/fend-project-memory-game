@@ -107,11 +107,23 @@ h1 {
     display: inline-block;
 }
 
-.score-panel .restart {
+.score-panel .start {
     float: right;
     cursor: pointer;
 }
 
+.score-panel .start .fa-repeat-inactive {
+    display: none;
+}
+
 .hidden {
-  opacity: 0;
+    opacity: 0;
+}
+
+.message {
+    display: block;
+}
+
+.message-inactive {
+    display: none;
 }

@@ -23,12 +23,15 @@
         	</ul>
 
         	<span class="moves">0</span> Moves
-          <span class="timer">0</span> Sec
-
-          <div class="restart">
-            <span class="restart-text">Start</span>
-        		<i class="fa fa-repeat"></i>
-        	</div>
+          <span class="time">0</span> Sec
+          <div class="controls">
+            <button class="pause" type="button" disabled>Pause</button>
+            <button class="resume" type="button" disabled>Resume</button>
+            <button class="start" type="button">
+              <span class="start-text">Start</span>
+              <i class="fa fa-repeat fa-repeat-inactive"></i>
+            </button>
+          </div>
         </section>
 
         <ul class="deck deck-inactive">
@@ -81,6 +84,11 @@
                 <i class="fa fa-cube"></i>
             </li>
         </ul>
+
+        <div class="message message-inactive">
+          <p>All cards match!</p>
+          <p>Your time in seconds is <span class="message-time"></span> and your rating is <span class="message-rating"></span></p>
+        </div>
     </div>
 
     <script src="js/app.js"></script>
