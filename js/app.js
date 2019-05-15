@@ -1,58 +1,64 @@
 'use strict';
 
-const reset = document.querySelector('.restart');
-const resetText = document.querySelector('.restart-text');
-const timerCount = document.querySelector('.timer');
+// controls
+const start = document.querySelector('.start');
+const startText = document.querySelector('.start-text');
+const restartIcon = document.querySelector('.start .fa-repeat');
+const pause = document.querySelector('.pause');
+const resume = document.querySelector('.resume');
+
+// message
+const message = document.querySelector('.message');
+const messageTime = document.querySelector('.message-time');
+const messageRating = document.querySelector('.message-rating');
+
+// deck
 const deck = document.querySelector('.deck');
-const cardsStart = Array.from(document.querySelectorAll('.card'));
-
-const stars = Array.from(document.querySelectorAll('.fa-star'));
+const cardsStart = Array.from(document.querySelectorAll('.card')); // IE support by polyfill
 const cardsPairs = cardsStart.length / 2;
-const movesCount = document.querySelector('.moves');
 
+// score panel
+const stars = Array.from(document.querySelectorAll('.fa-star')); // IE support by polyfill
+const timeEl = document.querySelector('.time');
+const movesEl = document.querySelector('.moves');
+
+// util
+let movesCounter;
 const move = {
   'cardName1': '',
   'cardName2': ''
 }
-
+let ratingCounter;
 const rating = {
-  'breakpoint1': cardsStart.length / 4,
+  'max': 3,
+  'breakpoint1': cardsStart.length,
   'breakpoint2': cardsStart.length * 2
 }
-
-/*
- * Create a list that holds all of your cards
- */
-
-
-/*
- * Display the cards on the page
- *   - shuffle the list of cards using the provided "shuffle" method below
- *   - loop through each card and create its HTML
- *   - add each card's HTML to the page
- */
+let time; // in seconds
+let timer;
+let matchCounter;
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
+  var currentIndex = array.length, temporaryValue, randomIndex;
 
-    while (currentIndex !== 0) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
-    }
+  while (currentIndex !== 0) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+  }
 
-    return array;
+  return array;
 }
-
 
 // shuffle and render cards
 function layoutCards () {
   deck.classList.remove('deck-inactive');
   const cards = shuffle(cardsStart);
   const frag = document.createDocumentFragment();
+  // IE support by polyfill
   cards.forEach(function (el) {
     el.classList.remove('open');
     el.classList.remove('show');
@@ -62,44 +68,25 @@ function layoutCards () {
   deck.appendChild(frag);
 }
 
-/*
- * set up the event listener for a card. If a card is clicked:
- *  - display the card's symbol (put this functionality in another function that you call from this one)
- *  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
- *  - if the list already has another card, check to see if the two cards match
- *    + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
- *    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
- *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
- *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
- */
-
-
-let secondCount;
-let timer;
-
-let movesCounter;
-let matchCounter;
-
 // reset rating, initialize moves and match counters
 function resetScorePanel () {
+  // IE support by polyfill
   stars.forEach(function (el) {
     el.classList.remove('hidden');
   })
+  ratingCounter = rating['max'];
   movesCounter = 0;
-  movesCount.textContent = movesCounter;
+  movesEl.textContent = movesCounter;
   matchCounter = 0;
-  resetText.textContent = 'Reset';
 }
 
-function displayTime () {
-  secondCount++;
-  timerCount.textContent = secondCount;
-}
-
-// start timer
-function startTimer () {
-  secondCount = 0;
-  timer = setInterval(displayTime, 1000);
+// start timer at a given amount of seconds
+function startTimer (startTime) {
+  time = startTime;
+  timer = setInterval(function () {
+    time++;
+    timeEl.textContent = time;
+  }, 1000);
 }
 
 // stop timer
@@ -107,25 +94,60 @@ function stopTimer () {
   clearInterval(timer);
 }
 
-// handler to restart the game
-function onResetClick () {
-  // stop timer if game not finished
-  stopTimer();
-  // reset deck
+// handler to start the game
+function onStartClick () {
+  message.classList.add('message-inactive');
   resetScorePanel();
   layoutCards();
   deck.addEventListener('click', onCardClick);
-  startTimer();
+  startTimer(0);
+  // update controls
+  startText.textContent = 'Restart';
+  restartIcon.classList.remove('fa-repeat-inactive');
+  start.disabled = true;
+  pause.disabled = false;
 }
 
-reset.addEventListener('click', onResetClick);
+// handler to pause the game
+function onPauseClick () {
+  deck.removeEventListener('click', onCardClick);
+  // pause timer
+  timeEl.textContent = time;
+  stopTimer();
+  // update controls
+  pause.disabled = true;
+  resume.disabled = false;
+}
 
+// handler to restart the game
+function onResumeClick () {
+  deck.addEventListener('click', onCardClick);
+  // restart timer from where it stopped
+  startTimer(time);
+  // update controls
+  pause.disabled = false;
+  resume.disabled = true;
+}
+
+start.addEventListener('click', onStartClick);
+pause.addEventListener('click', onPauseClick);
+resume.addEventListener('click', onResumeClick);
+
+
+function showMessage () {
+  message.classList.remove('message-inactive');
+  messageTime.textContent = time;
+  messageRating.textContent = ratingCounter;
+  return message;
+}
 
 // check if the cards are the last match in a deck
 function checkWin () {
   if (matchCounter === cardsPairs) {
-    console.log('Winner message');
     stopTimer();
+    showMessage();
+    start.disabled = false;
+    pause.disabled = true;
   }
 }
 
@@ -133,8 +155,10 @@ function checkWin () {
 function updateRating () {
   if (movesCounter === rating['breakpoint1']) {
     stars[2].classList.add('hidden');
+    ratingCounter--;
   } else if (movesCounter === rating['breakpoint2']) {
     stars[1].classList.add('hidden');
+    ratingCounter--;
   }
 }
 
@@ -156,8 +180,10 @@ function recordMove (card) {
 function resetMove () {
   move['cardName1'] = '';
   move['cardName2'] = '';
-  deck.querySelector('.card1').classList.remove('open', 'show');
-  deck.querySelector('.card2').classList.remove('open', 'show');
+  deck.querySelector('.card1').classList.remove('open');
+  deck.querySelector('.card2').classList.remove('open');
+  deck.querySelector('.card1').classList.remove('show');
+  deck.querySelector('.card2').classList.remove('show');
   deck.querySelector('.card1').classList.remove('card1');
   deck.querySelector('.card2').classList.remove('card2');
   return move;
@@ -169,15 +195,15 @@ function checkMatch () {
     // leave open and increase a match counter if cards match
     deck.querySelector('.card1').classList.add('match');
     deck.querySelector('.card2').classList.add('match');
-    matchCounter += 1;
+    matchCounter++;
     resetMove();
   } else {
     // close if cards do not match
     setTimeout(resetMove, 300)
   }
   // update score panel
-  movesCounter += 1;
-  movesCount.textContent = movesCounter;
+  movesCounter++;
+  movesEl.textContent = movesCounter;
   updateRating();
   checkWin();
 }
