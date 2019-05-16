@@ -11,6 +11,8 @@ const resume = document.querySelector('.resume');
 const message = document.querySelector('.message');
 const messageTime = document.querySelector('.message-time');
 const messageRating = document.querySelector('.message-rating');
+const leader = document.querySelector('.leader');
+const leaderTime = document.querySelector('.leader-time');
 
 // deck
 const deck = document.querySelector('.deck');
@@ -172,6 +174,15 @@ function showMessage () {
 function checkWin () {
   if (matchCounter === cardsPairs) {
     stopTimer();
+    // check web storage support
+    if (typeof(Storage) !== 'undefined') {
+      // update local storage with the best time
+      if (!localStorage.bestTime || localStorage.bestTime > time) {
+        localStorage.bestTime = time;
+      }
+      leaderTime.textContent = localStorage.bestTime;
+      leader.classList.remove('leader-inactive');
+    }
     showMessage();
     start.disabled = false;
     pause.disabled = true;
