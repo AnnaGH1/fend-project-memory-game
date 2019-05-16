@@ -14,8 +14,6 @@ const messageRating = document.querySelector('.message-rating');
 
 // deck
 const deck = document.querySelector('.deck');
-const cardsStart = Array.from(document.querySelectorAll('.card')); // IE support by polyfill
-const cardsPairs = cardsStart.length / 2;
 
 // score panel
 const stars = Array.from(document.querySelectorAll('.fa-star')); // IE support by polyfill
@@ -23,6 +21,7 @@ const timeEl = document.querySelector('.time');
 const movesEl = document.querySelector('.moves');
 
 // util
+let cardsPairs = 0;
 let movesCounter;
 const move = {
   'cardName1': '',
@@ -31,12 +30,34 @@ const move = {
 let ratingCounter;
 const rating = {
   'max': 3,
-  'breakpoint1': cardsStart.length,
-  'breakpoint2': cardsStart.length * 2
+  'breakpoint1': 0,
+  'breakpoint2': 0
 }
 let time; // in seconds
 let timer;
 let matchCounter;
+
+// list of unique cards
+const cardsUnique = [
+  'anchor',
+  'bicycle',
+  'bolt',
+  'bomb',
+  'cube',
+  'diamond',
+  'leaf',
+  'paper-plane-o'
+];
+
+// duplicate an array of unique cards before rendering
+function duplicateCards (arr) {
+  const duplicateArr = [];
+  arr.forEach(function(el) {
+    duplicateArr.push(el);
+    duplicateArr.push(el);
+  })
+  return duplicateArr;
+}
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
@@ -56,16 +77,18 @@ function shuffle(array) {
 // shuffle and render cards
 function layoutCards () {
   deck.classList.remove('deck-inactive');
-  const cards = shuffle(cardsStart);
-  const frag = document.createDocumentFragment();
-  // IE support by polyfill
-  cards.forEach(function (el) {
-    el.classList.remove('open');
-    el.classList.remove('show');
-    el.classList.remove('match');
-    frag.appendChild(el);
+  const cardsListHtml = [];
+  const cards = shuffle(duplicateCards(cardsUnique));
+  // once the number of cards is known, update variables
+  cardsPairs = cards.length / 2;
+  rating['breakpoint1'] = cards.length;
+  rating['breakpoint2'] = cards.length * 2;
+  // render cards
+  cards.forEach(function(el) {
+    const cardTemplate = `<li class="card"><i class="fa fa-${el}"></i></li>`;
+    cardsListHtml.push(cardTemplate);
   })
-  deck.appendChild(frag);
+  deck.insertAdjacentHTML('afterbegin', cardsListHtml.join(''));
 }
 
 // reset rating, initialize moves and match counters
@@ -97,6 +120,10 @@ function stopTimer () {
 // handler to start the game
 function onStartClick () {
   message.classList.add('message-inactive');
+  // clear cards from the previous game
+  while (deck.firstElementChild) {
+    deck.removeChild(deck.firstElementChild);
+  }
   resetScorePanel();
   layoutCards();
   deck.addEventListener('click', onCardClick);

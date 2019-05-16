@@ -116,6 +116,11 @@ h1 {
     display: none;
 }
 
+.score-panel .pause,
+.score-panel .resume {
+    cursor: pointer;
+}
+
 .hidden {
     opacity: 0;
 }
