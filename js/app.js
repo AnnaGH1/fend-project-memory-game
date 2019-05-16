@@ -87,7 +87,7 @@ function layoutCards () {
   rating['breakpoint2'] = cards.length * 2;
   // render cards
   cards.forEach(function(el) {
-    const cardTemplate = `<li class="card"><i class="fa fa-${el}"></i></li>`;
+    const cardTemplate = '<li class="card"><i class="fa fa-' + el + '"></i></li>';
     cardsListHtml.push(cardTemplate);
   })
   deck.insertAdjacentHTML('afterbegin', cardsListHtml.join(''));
@@ -164,6 +164,7 @@ resume.addEventListener('click', onResumeClick);
 
 
 function showMessage () {
+  deck.classList.add('deck-inactive');
   message.classList.remove('message-inactive');
   messageTime.textContent = time;
   messageRating.textContent = ratingCounter;
