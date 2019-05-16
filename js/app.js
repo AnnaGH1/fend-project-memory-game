@@ -28,13 +28,13 @@ let movesCounter;
 const move = {
   'cardName1': '',
   'cardName2': ''
-}
+};
 let ratingCounter;
 const rating = {
   'max': 3,
   'breakpoint1': 0,
   'breakpoint2': 0
-}
+};
 let time; // in seconds
 let timer;
 let matchCounter;
@@ -57,7 +57,7 @@ function duplicateCards (arr) {
   arr.forEach(function(el) {
     duplicateArr.push(el);
     duplicateArr.push(el);
-  })
+  });
   return duplicateArr;
 }
 
@@ -89,8 +89,8 @@ function layoutCards () {
   cards.forEach(function(el) {
     const cardTemplate = '<li class="card"><i class="fa fa-' + el + '"></i></li>';
     cardsListHtml.push(cardTemplate);
-  })
-  deck.insertAdjacentHTML('afterbegin', cardsListHtml.join(''));
+  });
+  deck.innerHTML = cardsListHtml.join('');
 }
 
 // reset rating, initialize moves and match counters
@@ -98,7 +98,7 @@ function resetScorePanel () {
   // IE support by polyfill
   stars.forEach(function (el) {
     el.classList.remove('hidden');
-  })
+  });
   ratingCounter = rating['max'];
   movesCounter = 0;
   movesEl.textContent = movesCounter;
@@ -122,10 +122,6 @@ function stopTimer () {
 // handler to start the game
 function onStartClick () {
   message.classList.add('message-inactive');
-  // clear cards from the previous game
-  while (deck.firstElementChild) {
-    deck.removeChild(deck.firstElementChild);
-  }
   resetScorePanel();
   layoutCards();
   deck.addEventListener('click', onCardClick);
