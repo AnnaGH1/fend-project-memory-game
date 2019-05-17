@@ -22,6 +22,7 @@ body {
 }
 
 .container {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -47,8 +48,12 @@ h1 {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    align-items: center;
+    align-content: space-around;
     margin: 0 0 3em;
+}
+
+.deck-inactive {
+  opacity: 0.3;
 }
 
 .deck .card {
@@ -103,7 +108,47 @@ h1 {
     display: inline-block;
 }
 
-.score-panel .restart {
+.score-panel .start {
     float: right;
     cursor: pointer;
+}
+
+.score-panel .start .fa-repeat-inactive {
+    display: none;
+}
+
+.score-panel .pause,
+.score-panel .resume {
+    cursor: pointer;
+}
+
+.hidden {
+    opacity: 0;
+}
+
+.message {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: block;
+    box-sizing: border-box;
+    width: 596px;
+    padding: 50px 0;
+    font-style: italic;
+    text-align: center;
+    background-color: #7cc90e;
+    border: 10px solid rgba(76, 209, 86, 0.62);
+}
+
+.message-inactive {
+    display: none;
+}
+
+.leader {
+  display: block;
+}
+
+.leader-inactive {
+    display: none;
 }

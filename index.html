@@ -22,65 +22,29 @@
         		<li><i class="fa fa-star"></i></li>
         	</ul>
 
-        	<span class="moves">3</span> Moves
-
-            <div class="restart">
-        		<i class="fa fa-repeat"></i>
-        	</div>
+        	<span class="moves">0</span> Moves
+          <span class="time">0</span> Sec
+          <div class="controls">
+            <button class="pause" type="button" disabled>Pause</button>
+            <button class="resume" type="button" disabled>Resume</button>
+            <button class="start" type="button">
+              <span class="start-text">Start</span>
+              <i class="fa fa-repeat fa-repeat-inactive"></i>
+            </button>
+          </div>
         </section>
 
-        <ul class="deck">
-            <li class="card">
-                <i class="fa fa-diamond"></i>
-            </li>
-            <li class="card">
-                <i class="fa fa-paper-plane-o"></i>
-            </li>
-            <li class="card match">
-                <i class="fa fa-anchor"></i>
-            </li>
-            <li class="card">
-                <i class="fa fa-bolt"></i>
-            </li>
-            <li class="card">
-                <i class="fa fa-cube"></i>
-            </li>
-            <li class="card match">
-                <i class="fa fa-anchor"></i>
-            </li>
-            <li class="card">
-                <i class="fa fa-leaf"></i>
-            </li>
-            <li class="card">
-                <i class="fa fa-bicycle"></i>
-            </li>
-            <li class="card">
-                <i class="fa fa-diamond"></i>
-            </li>
-            <li class="card">
-                <i class="fa fa-bomb"></i>
-            </li>
-            <li class="card">
-                <i class="fa fa-leaf"></i>
-            </li>
-            <li class="card">
-                <i class="fa fa-bomb"></i>
-            </li>
-            <li class="card open show">
-                <i class="fa fa-bolt"></i>
-            </li>
-            <li class="card">
-                <i class="fa fa-bicycle"></i>
-            </li>
-            <li class="card">
-                <i class="fa fa-paper-plane-o"></i>
-            </li>
-            <li class="card">
-                <i class="fa fa-cube"></i>
-            </li>
+        <ul class="deck deck-inactive">
         </ul>
-    </div>
 
+        <section class="message message-inactive">
+          <p>All cards match!</p>
+          <p>Your time is <span class="message-time"></span> seconds and your rating is <span class="message-rating"></span></p>
+          <p class="leader leader-inactive">The best time is <span class="leader-time"></span></p>
+          <p>To play again, click Restart</p>
+        </section>
+    </div>
+    <script src="js/polyfills.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

@@ -2,19 +2,21 @@
 
 ## Table of Contents
 
-* [Instructions](#instructions)
-* [Contributing](#contributing)
+* [Installation](#installation)
+* [Usage](#usage)
 
-## Instructions
+## Getting Started
 
-The starter project has some HTML and CSS styling to display a static version of the Memory Game project. You'll need to convert this project from a static project to an interactive one. This will require modifying the HTML and CSS files, but primarily the JavaScript file.
+Download the project folder and open [index.html](index.html) in a browser.
 
-To get started, open `js/app.js` and start building out the app's functionality
+## Game Rules
 
-For specific, detailed instructions, look at the project instructions in the [Udacity Classroom](https://classroom.udacity.com/me).
+Press the _Start_ button to begin the game.
 
-## Contributing
+The deck consists of an even number of cards, each card has a _match_ (an identical card). To make a move, open two cards. If they match, they will remain face up, otherwise they will flip face down. The goal is to find all matches in the least amount of time.
 
-This repository is the starter code for _all_ Udacity students. Therefore, we most likely will not accept pull requests.
+When all card match, you will see your time and your rating. The more moves you make to finish the game, the lower the rating.
 
-For details, check out [CONTRIBUTING.md](CONTRIBUTING.md).
+To pause the current game, press _Pause_ button. To continue, press _Resume_. When all cards match, press _Restart_ to start a new game.
+
+Enjoy the Matching Game!
