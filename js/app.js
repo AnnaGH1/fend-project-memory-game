@@ -1,28 +1,47 @@
 'use strict';
 
-// controls
+/**
+ * Select control elements
+ * @type {Element}
+ */
 const start = document.querySelector('.start');
 const startText = document.querySelector('.start-text');
 const restartIcon = document.querySelector('.start .fa-repeat');
 const pause = document.querySelector('.pause');
 const resume = document.querySelector('.resume');
 
-// message
+/**
+ * Select message elements
+ * @type {Element}
+ */
 const message = document.querySelector('.message');
 const messageTime = document.querySelector('.message-time');
 const messageRating = document.querySelector('.message-rating');
 const leader = document.querySelector('.leader');
 const leaderTime = document.querySelector('.leader-time');
 
-// deck
+/**
+ * Select deck element
+ * @type {Element}
+ */
 const deck = document.querySelector('.deck');
 
-// score panel
-const stars = Array.from(document.querySelectorAll('.fa-star')); // IE support by polyfill
+/**
+ * Select score panel elements
+ * @type {Element}
+ */
 const timeEl = document.querySelector('.time');
 const movesEl = document.querySelector('.moves');
+const starsEls = document.querySelectorAll('.fa-star');
 
-// util
+/*
+IE support by polyfill
+ */
+const stars = Array.from(starsEls);
+
+/**
+ * Declare or initialize variables for game control
+ */
 let cardsPairs = 0;
 let movesCounter;
 const move = {
@@ -35,11 +54,14 @@ const rating = {
   'breakpoint1': 0,
   'breakpoint2': 0
 };
-let time; // in seconds
+let time;
 let timer;
 let matchCounter;
 
-// list of unique cards
+/**
+ * List of unique cards
+ * @type {string[]}
+ */
 const cardsUnique = [
   'anchor',
   'bicycle',
@@ -51,7 +73,11 @@ const cardsUnique = [
   'paper-plane-o'
 ];
 
-// duplicate an array of unique cards before rendering
+/**
+ * @function duplicateCards
+ * @param {Array} arr - List of unique cards
+ * @returns {Array} - List of cards to be rendered
+ */
 function duplicateCards (arr) {
   const duplicateArr = [];
   arr.forEach(function(el) {
@@ -61,7 +87,11 @@ function duplicateCards (arr) {
   return duplicateArr;
 }
 
-// Shuffle function from http://stackoverflow.com/a/2450976
+/**
+ * @function shuffle - from http://stackoverflow.com/a/2450976
+ * @param {Array} array
+ * @returns {Array}
+ */
 function shuffle(array) {
   var currentIndex = array.length, temporaryValue, randomIndex;
 
@@ -76,12 +106,16 @@ function shuffle(array) {
   return array;
 }
 
-// shuffle and render cards
+/**
+ * @function layoutCards - Shuffle and render cards
+ */
 function layoutCards () {
   deck.classList.remove('deck-inactive');
   const cardsListHtml = [];
   const cards = shuffle(duplicateCards(cardsUnique));
-  // once the number of cards is known, update variables
+  /*
+  Once the number of cards is known, update variables
+   */
   cardsPairs = cards.length / 2;
   rating['breakpoint1'] = cards.length;
   rating['breakpoint2'] = cards.length * 2;
@@ -93,9 +127,13 @@ function layoutCards () {
   deck.innerHTML = cardsListHtml.join('');
 }
 
-// reset rating, initialize moves and match counters
+/**
+ * @function resetScorePanel - Reset rating, initialize moves and match counters
+ */
 function resetScorePanel () {
-  // IE support by polyfill
+  /*
+  IE support by polyfill
+   */
   stars.forEach(function (el) {
     el.classList.remove('hidden');
   });
@@ -105,7 +143,10 @@ function resetScorePanel () {
   matchCounter = 0;
 }
 
-// start timer at a given amount of seconds
+/**
+ * @function startTimer - Start timer at a given number of seconds
+ * @param {number} startTime
+ */
 function startTimer (startTime) {
   time = startTime;
   timer = setInterval(function () {
@@ -114,51 +155,75 @@ function startTimer (startTime) {
   }, 1000);
 }
 
-// stop timer
+/**
+ * @function stopTimer
+ */
 function stopTimer () {
   clearInterval(timer);
 }
 
-// handler to start the game
+/**
+ * @function onStartClick - Handler to start the game
+ */
 function onStartClick () {
   message.classList.add('message-inactive');
   resetScorePanel();
   layoutCards();
   deck.addEventListener('click', onCardClick);
   startTimer(0);
-  // update controls
+  /*
+  Update controls
+   */
   startText.textContent = 'Restart';
   restartIcon.classList.remove('fa-repeat-inactive');
   start.disabled = true;
   pause.disabled = false;
 }
 
-// handler to pause the game
+/**
+ * @function onStartClick - Handler to pause the game
+ */
 function onPauseClick () {
   deck.removeEventListener('click', onCardClick);
-  // pause timer
+  /*
+  Pause timer
+   */
   timeEl.textContent = time;
   stopTimer();
-  // update controls
+  /*
+  Update controls
+   */
   pause.disabled = true;
   resume.disabled = false;
 }
 
-// handler to restart the game
+/**
+ * @function onStartClick - Handler to restart the game
+ */
 function onResumeClick () {
   deck.addEventListener('click', onCardClick);
-  // restart timer from where it stopped
+  /*
+  Restart timer from where it stopped
+   */
   startTimer(time);
-  // update controls
+  /*
+  Update controls
+   */
   pause.disabled = false;
   resume.disabled = true;
 }
 
+/*
+Attach event listeners to controls
+ */
 start.addEventListener('click', onStartClick);
 pause.addEventListener('click', onPauseClick);
 resume.addEventListener('click', onResumeClick);
 
-
+/**
+ * @function showMessage - Show winner message
+ * @returns {Element}
+ */
 function showMessage () {
   deck.classList.add('deck-inactive');
   message.classList.remove('message-inactive');
@@ -167,13 +232,20 @@ function showMessage () {
   return message;
 }
 
-// check if the cards are the last match in a deck
+/**
+ * @function checkWin - Check if cards are the last match in the deck
+ * @returns {boolean}
+ */
 function checkWin () {
   if (matchCounter === cardsPairs) {
     stopTimer();
-    // check web storage support
+    /*
+    Check web storage support
+     */
     if (typeof(Storage) !== 'undefined') {
-      // update local storage with the best time
+      /*
+      Update local storage with the best time
+       */
       if (!localStorage.bestTime || localStorage.bestTime > time) {
         localStorage.bestTime = time;
       }
@@ -183,10 +255,14 @@ function checkWin () {
     showMessage();
     start.disabled = false;
     pause.disabled = true;
+    return true;
   }
+  return false;
 }
 
-// remove a star at moves breakpoints
+/**
+ * @function updateRating - Remove a star at moves breakpoints
+ */
 function updateRating () {
   if (movesCounter === rating['breakpoint1']) {
     stars[2].classList.add('hidden');
@@ -197,7 +273,11 @@ function updateRating () {
   }
 }
 
-// record open cards names to check for match
+/**
+ * @function recordMove - Record open cards names to check for match
+ * @param {Element} card - Open card
+ * @returns {{cardName1: string, cardName2: string}}
+ */
 function recordMove (card) {
   if (!move['cardName1'] && !move['cardName2']) {
     card.classList.add('card1');
@@ -211,7 +291,10 @@ function recordMove (card) {
   return move;
 }
 
-// clear current cards info
+/**
+ * @function resetMove - Clear current cards values
+ * @returns {{cardName1: string, cardName2: string}}
+ */
 function resetMove () {
   move['cardName1'] = '';
   move['cardName2'] = '';
@@ -224,37 +307,55 @@ function resetMove () {
   return move;
 }
 
-// check if the cards match and update score panel
+/**
+ * @function checkMatch - Check if cards match and update score panel
+ * @returns {boolean}
+ */
 function checkMatch () {
   if (move['cardName1'] === move['cardName2']) {
-    // leave open and increase a match counter if cards match
+    /*
+    Leave open and increase a match counter if cards match
+     */
     deck.querySelector('.card1').classList.add('match');
     deck.querySelector('.card2').classList.add('match');
     matchCounter++;
     resetMove();
-  } else {
-    // close if cards do not match
-    setTimeout(resetMove, 300)
+    return true;
   }
-  // update score panel
-  movesCounter++;
-  movesEl.textContent = movesCounter;
-  updateRating();
-  checkWin();
+  /*
+  Close if cards do not match
+   */
+  setTimeout(resetMove, 300);
+  return false
 }
 
-// open a card and check for match
+/**
+ * @function onCardClick - Handler to open a card and check for match
+ * @param {Event} e - Click event
+ */
 function onCardClick (e) {
-  // Check if a card is clicked and it is not the same as previously opened or matched
+  /*
+  Check if card is clicked and is not the same as previously opened or matched
+   */
   if (e.target.classList.contains('card') && (!e.target.classList.contains('card1')) && (!e.target.classList.contains('match'))) {
-    // open a card and record a move
+    /*
+    Open a card and record a move
+     */
     e.target.classList.add('open');
     e.target.classList.add('show');
     recordMove(e.target);
-
-    // When two cards are open, check for match
+    /*
+    When two cards are open, check for match
+     */
     if (move['cardName1'] && move['cardName2']) {
       checkMatch();
+      /*
+      Update score panel
+       */
+      movesCounter++;
+      movesEl.textContent = movesCounter;
+      updateRating();
+      checkWin();
     }
   }
 }
